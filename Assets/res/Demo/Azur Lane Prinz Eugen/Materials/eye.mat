@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 24_face1_0.8_0_0
+  m_Name: eye
   m_Shader: {fileID: 4800000, guid: 076eb252b73aee64292e092556948839, type: 3}
-  m_ShaderKeywords: _HL_NPR _HSV_OTColor _NORMALMAP _NORMALMAP_TANGENT_SPACE _OUTLINE_ENABLE_ON
+  m_ShaderKeywords: _HSV_OTColor _NORMALMAP _NORMALMAP_TANGENT_SPACE _OUTLINE_ENABLE_ON
     _RIMLIGHT_ENABLE_ON _RIM_SS _SKIN_MODE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -134,7 +134,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
-        m_Texture: {fileID: 2800000, guid: a7ffb1b431a047049998fe945884aa1e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2a3af324e381a234bbed7b13d9ffc4da, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCapNormalMap:
@@ -296,11 +296,11 @@ Material:
     - _HeightTessAmplitude: 2
     - _HeightTessCenter: 0.5
     - _HighColorInt1: 1
-    - _HighColorInt2: 0.44099998
+    - _HighColorInt2: 0.441
     - _HighColorIntOnShadow1: 0.3
     - _HighColorIntOnShadow2: 0.3
     - _HighColorLevel: 0
-    - _HighColorPointInt1: 0.007000001
+    - _HighColorPointInt1: 0.007
     - _HighColorPointInt2: 0
     - _HighLightFeather1: 0.01
     - _HighLightPower2: 36
@@ -328,8 +328,8 @@ Material:
     - _Outline_Blend: 1
     - _Outline_Lightness: -0
     - _Outline_Lod: 1
-    - _Outline_Purity: 0.43999997
-    - _Outline_Width: 2
+    - _Outline_Purity: 0.44
+    - _Outline_Width: 0
     - _PPDLodThreshold: 5
     - _PPDMaxSamples: 15
     - _PPDMinSamples: 5
@@ -367,16 +367,16 @@ Material:
     - _RimLight_Mode: 1
     - _SSRefractionProjectionModel: 0
     - _ShadowColorBlend2: 0.8
-    - _ShadowIntensity: 0.6
+    - _ShadowIntensity: 0
     - _ShadowIntensity2: -0.5
     - _ShadowMode: 0
-    - _ShadowSkinIntensity: 0.5
+    - _ShadowSkinIntensity: 0
     - _Shadow_DepthThreshold: 0
     - _Shadow_Feather: 0.19600002
     - _Shadow_Feather2: 0.0009999999
     - _Shadow_Gamma: 0.74999994
     - _Shadow_Lightness: 0
-    - _Shadow_Power: 0.5
+    - _Shadow_Power: 0
     - _Shadow_Purity: 0.502
     - _Shadow_Scale: 1.1999999
     - _Shadow_Step: 0.42
@@ -451,7 +451,7 @@ Material:
     - _Emissive_ColorA2: {r: 1, g: 1, b: 1, a: 1}
     - _Emissive_ColorB1: {r: 1, g: 1, b: 1, a: 1}
     - _Emissive_ColorB2: {r: 1, g: 1, b: 1, a: 1}
-    - _FaceForward: {r: 0, g: -1, b: -0.000000059604645, a: 0}
+    - _FaceForward: {r: 0, g: 0, b: 1, a: 0}
     - _HighColor1: {r: 1, g: 1, b: 1, a: 1}
     - _HighColor2: {r: 1, g: 1, b: 1, a: 1}
     - _InvPrimScale: {r: 1, g: 1, b: 0, a: 0}
@@ -476,7 +476,7 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
---- !u!114 &8094491227404567226
+--- !u!114 &7037175732471352889
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

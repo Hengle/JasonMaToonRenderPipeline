@@ -62,6 +62,7 @@ int _PassValue;
 
 uniform float4 _Color;
 uniform float4 _AddColor;
+uniform float _Purity;
 uniform float _AddColorIntensity;
 
 uniform float _LightColorBlend;
@@ -72,13 +73,14 @@ uniform float _PointLightFeather;
 uniform float _LightColorIntensity;
 
 uniform float _NormalScale;
+uniform float _DiffuseNormalBlend;
 
 uniform float _ShadowIntensity;
 uniform float3 _ShadowFixedColor;
 uniform float3 _ShadowMapColor;
 uniform float _Shadow_Step;
 uniform float _Shadow_Feather;
-uniform float _Shadow_Power;
+uniform float _Shadow_Purity;
 uniform float4 _ShadowColor2;
 uniform float _ShadowIntensity2;
 uniform float _ShadowColorBlend2;

@@ -13,9 +13,9 @@ struct VertexOutput
     float4 pos: SV_POSITION;
     float2 uv0: TEXCOORD0;
     float2 uv1: TEXCOORD1;
-    float3 normalDir: COLOR0;
-    float3 tangentDir: COLOR1;
-    float3 bitangentDir: COLOR2;
+    // float3 normalDir: COLOR0;
+    // float3 tangentDir: COLOR1;
+    // float3 bitangentDir: COLOR2;
 };
 
 #include "ForwardFunction.hlsl"
@@ -32,13 +32,13 @@ VertexOutput vert(VertexInput v)
     
     o.uv0 = v.texcoord0;
     o.uv1 = v.texcoord1;
-    o.normalDir = TransformObjectToWorldNormal(v.normal);
-    o.tangentDir = normalize(mul(UNITY_MATRIX_M, float4(v.tangent.xyz, 0.0)).xyz);
-    o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
-    float3x3 tangentTransform = float3x3(o.tangentDir, o.bitangentDir, o.normalDir);
+    float3 normalDir = TransformObjectToWorldNormal(v.normal);
+    float3 tangentDir = normalize(mul(UNITY_MATRIX_M, float4(v.tangent.xyz, 0.0)).xyz);
+    float3 bitangentDir = normalize(cross(normalDir, tangentDir) * v.tangent.w);
+    float3x3 tangentTransform = float3x3(tangentDir, bitangentDir, normalDir);
     
     #ifdef _ORIGINNORMAL_ON
-        float3 _BakedNormalDir = o.normalDir;
+        float3 _BakedNormalDir = normalDir;
     #else
         float3 _BakedNormalDir = GetSmoothedWorldNormal(v.texcoord7, tangentTransform);
     #endif
@@ -69,15 +69,15 @@ float4 frag(VertexOutput i): SV_Target
     #ifndef _OUTLINE_ENABLE_ON
         return(float4)0;
     #endif
-
+    
     float3 lightColor = _DirectionalLightDatas[0].color.rgb * GetCurrentExposureMultiplier() * _LightColorIntensity;
     float2 Set_UV0 = i.uv0;
     float2 Set_UV1 = i.uv1;
     float4 _MainTex_var = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, Set_UV0) * _Color;
     
     float3 Set_BaseColor = _Outline_Color.rgb * lightColor * lerp(1, _MainTex_var.rgb, _Outline_Blend);
-    Set_BaseColor = RgbToHsv(Set_BaseColor);
-    Set_BaseColor = float3(Set_BaseColor.r, Set_BaseColor.g + _Outline_Purity, Set_BaseColor.b + _Outline_Lightness);
     
-    return float4(HsvToRgb(Set_BaseColor) + _AddColor.rgb * _AddColorIntensity, 1.0);
+    Set_BaseColor = ShiftColorPurity(Set_BaseColor, _Outline_Purity) * _Outline_Lightness;
+    
+    return float4(Set_BaseColor + _AddColor.rgb * _AddColorIntensity, 1.0);
 }

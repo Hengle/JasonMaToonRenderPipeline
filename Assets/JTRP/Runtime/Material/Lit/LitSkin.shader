@@ -1,10 +1,11 @@
-Shader "JTRP/Lit"
+Shader "JTRP/Lit Skin"
 {
     Properties
     {
         [Enum(OFF, 0, FRONT, 1, BACK, 2)] _CullMode ("Cull Mode：裁剪", int) = 2  //OFF/FRONT/BACK
         [Queue] _RenderQueue ( "Queue", int) = 2000
         [Toggle(_)] _ZWrite ("ZWrite", Float) = 1.0
+        
         
         [Title(_, Diffuse)]
         [Tex(_, _Color)] _MainTex ("ColorMap (RGB)", 2D) = "white" { }
@@ -22,38 +23,35 @@ Shader "JTRP/Lit"
         [PowerSlider(4)] _PointLightFeather ("Point Light Feather：羽化", Range(0.0001, 1)) = 0.001
         
         
-        [Title(_, Normal)]
-        [Tex(_, _NormalScale)][Normal] _NormalMap ("NormalMap", 2D) = "bump" { }
-        [HideInInspector] _NormalScale ("Normal Scale：深度", Range(0.0, 1.0)) = 1.0
-        _DiffuseNormalBlend ("Diffuse Normal Blend", Range(0.0, 1.0)) = 0.0
-        
         [Main(_shadow, _, 2)]
         _shadow ("Shadow", float) = 0
         [Tex(_shadow)] _ShadowMap ("ShadowMap (RGBA)", 2D) = "black" { }
+        [KWEnum(_shadow, Skin, _SKIN_MODE, Face, _FACE_MODE)]
+        _ShadowMode ("Shadow Mode", float) = 0
         [Sub(_shadow)] _ShadowFixedColor ("Color：固有阴影颜色", Color) = (0.5, 0.5, 0.5, 1)
         [SubToggle(_shadow, _ENABLE_SELFSHADOW)] _enable_selfshadow ("Enable Self Shadow", float) = 1
-        [Title(_shadow, 1st Shadow)]
-        [Tex(_shadow, _ShadowMapColor)]_ShadowColorMap ("ShadowColorMap (RGB)", 2D) = "white" { }
-        [HideInInspector]_ShadowMapColor ("Color", Color) = (1, 1, 1, 1)
-        [Sub(_shadow)]_ShadowIntensity ("Int：强度", Range(0, 1)) = 0.6
+        
+        [Sub(_shadow)]_ShadowMapColor ("Color", Color) = (1, 1, 1, 1)
+        [Sub(_shadow)]_ShadowIntensity ("Int：强度", Range(0, 1)) = 0.2
         [Sub(_shadow)]_Shadow_Purity ("Purity：纯度", Range(0, 5)) = 2
-        [Sub(_shadow)]_Shadow_Step ("Step：阈值", Range(0, 1)) = 0.55
-        [SubPowerSlider(_shadow, 6)] _Shadow_Feather ("Feather：羽化", Range(0.0001, 1)) = 0.0001
-        [Title(_shadow, 2st Shadow)]
-        [Sub(_shadow)][HDR] _ShadowColor2 ("Color", Color) = (0, 0, 0, 1)
-        [Sub(_shadow)]_ShadowIntensity2 ("Int：强度", Range(-1, 1)) = -0.5
-        [Sub(_shadow)]_ShadowColorBlend2 ("Blend：混合", Range(0, 1)) = 0.8
-        [Sub(_shadow)]_Shadow_Step2 ("Step：阈值", Range(0, 1)) = 0.2
-        [SubPowerSlider(_shadow, 6)] _Shadow_Feather2 ("Feather：羽化", Range(0.0001, 1)) = 0.001
+        [Sub(_shadow_SKIN_MODE)]_Shadow_Step ("Step：阈值", Range(0, 1)) = 0.55
+        [SubPowerSlider(_shadow_SKIN_MODE, 6)] _Shadow_Feather ("Feather：羽化", Range(0.0001, 1)) = 0.0001
+        
+        [SubPowerSlider(_shadow_FACE_MODE, 3)] _Shadow_Gamma ("Gamma", Range(0.1, 8)) = 0.75
+        [SubPowerSlider(_shadow_FACE_MODE, 3)] _Shadow_Scale ("Scale", Range(1, 3)) = 1.2
+        [SubPowerSlider(_shadow_FACE_MODE, 8)] _Shadow_DepthThreshold ("Depth Threshold", Range(-0.01, 0.3)) = 0
+        [Sub(_shadow_FACE_MODE)] _Shadow_Width ("Shadow Width", Range(0, 2)) = 1
+        [HideInInspector] _FaceForward ("Face Forward", vector) = (0, 0, 1, 0)
+        [HideInInspector] _FaceShadowStep ("Face Shadow Step", Range(0, 1)) = 0
         
         
         [Main(_HL)]
         _Enable_HighLight ("HighLight", float) = 0
-        [Tex(_HL)] _LightMap ("LightMap (RGBA)", 2D) = "white" { }
+        // [Tex(_HL)] _LightMap ("LightMap (RGBA)", 2D) = "white" { }
         [KWEnum(_HL, NPR, _HL_NPR, PBR, _HL_PBR)]
         _HighLight_Mode ("HighLight Mode", float) = 0
         
-        [SubPowerSlider(_HL, 2)] _HighColorLevel ("Level：强度偏移", Range(-1, 1)) = 0
+        [SubPowerSlider(_HL, 2)] _HighColorLevel ("Level：强度", Range(0, 1)) = 1
         [Sub(_HL)][HDR] _HighColor1 ("Toon High Color1", Color) = (1, 1, 1, 1)
         [Sub(_HL)] _roughness ("Roughness：粗糙度", Range(0.02, 1)) = 0.5
         [SubPowerSlider(_HL, 2)]_HighColorInt1 ("Int1：强度", Range(0, 1)) = 1
@@ -67,18 +65,6 @@ Shader "JTRP/Lit"
         [SubPowerSlider(_HL_HL_NPR, 5)]_HighColorPointInt2 ("PointInt2：点光强度", Range(0, 1)) = 0.005
         [SubPowerSlider(_HL_HL_NPR, 2)]_HighLightPower2 ("power：范围", Range(0, 1000)) = 888
         [Sub(_HL_HL_NPR)]_HighColorIntOnShadow2 ("Int On Shadow2：阴影中强度", Range(0, 1)) = 0.3
-        
-        
-        [Main(MatCap)]
-        _MatCap_Enable ("MatCap", float) = 0
-        [Sub(MatCap)] _MatCap_Sampler ("MatCap Map (R)", 2D) = "black" { }
-        [Sub(MatCap)] _BumpScaleMatcap ("Noise Int：扰动强度", Range(-3, 3)) = 1
-        [Sub(MatCap)] _MatCapNormalMap ("Noise Map", 2D) = "black" { }
-        [Sub(MatCap)] [HDR] _MatCapColor ("MatCap Color", Color) = (1, 1, 1, 1)
-        [SubPowerSlider(MatCap, 3)] _MatCap ("Int：强度", Range(0, 1)) = 0.1
-        [SubPowerSlider(MatCap, 2)] _TweakMatCapOnShadow ("Int On Shadow：阴影中强度", Range(0, 1)) = 0.25
-        [SubPowerSlider(MatCap, 2)] _Tweak_MatcapMaskLevel ("Level：强度偏移", Range(-1, 1)) = 0
-        [SubPowerSlider(MatCap, 2)] _BlurLevelMatcap ("Blur Level：模糊", Range(0, 10)) = 0
         
         
         [Main(Rim)]
@@ -112,28 +98,6 @@ Shader "JTRP/Lit"
         [SubPowerSlider(Rim, 8)] _RimLightFeather3 ("Feather：羽化", Range(0, 1)) = 0.005
         [SubPowerSlider(Rim, 1.5)] _RimLightWidth3 ("Width：宽度", Range(0, 1)) = 0.3
         [SubPowerSlider(Rim, 0.35)] _RimLightLength3 ("Length：长度", Range(0, 10)) = 10
-        
-        
-        [Main(Emi)]
-        _Emissive_Enable ("Emissive", float) = 0
-        [Sub(Emi)] _Emissive_Mask1 ("Mask1：自发光遮罩", 2D) = "white" { }
-        [Sub(Emi)] [HDR] _Emissive_ColorA1 ("主色", Color) = (1, 1, 1, 1)
-        [Sub(Emi)] [HDR] _Emissive_ColorB1 ("副色", Color) = (1, 1, 1, 1)
-        [Sub(Emi)] _Emissive_IntA1 ("Int：主色强度", Range(0, 1)) = 0
-        [Sub(Emi)] _Emissive_IntB1 ("Int：副色强度", Range(0, 1)) = 0
-        [Sub(Emi)] _Emissive_Level1 ("Level：强度偏移", Range(-1, 1)) = 0
-        [SubPowerSlider(Emi, 4)] _Emissive_MoveHor1 ("Move：横向速度", Range(-10, 10)) = 0
-        [SubPowerSlider(Emi, 4)] _Emissive_MoveVer1 ("Move：竖向速度", Range(-10, 10)) = 0
-        [SubPowerSlider(Emi, 2)] _Emissive_Speed1 ("Speed：切换速度", Range(0, 10)) = 0
-        [Sub(Emi)] _Emissive_Mask2 ("Mask2：自发光遮罩", 2D) = "white" { }
-        [Sub(Emi)] [HDR] _Emissive_ColorA2 ("主色", Color) = (1, 1, 1, 1)
-        [Sub(Emi)] [HDR] _Emissive_ColorB2 ("副色", Color) = (1, 1, 1, 1)
-        [Sub(Emi)] _Emissive_IntA2 ("Int：主色强度", Range(0, 1)) = 0
-        [Sub(Emi)] _Emissive_IntB2 ("Int：副色强度", Range(0, 1)) = 0
-        [Sub(Emi)] _Emissive_Level2 ("Level：强度偏移", Range(-1, 1)) = 0
-        [SubPowerSlider(Emi, 4)] _Emissive_MoveHor2 ("Move：横向速度", Range(-10, 10)) = 0
-        [SubPowerSlider(Emi, 4)] _Emissive_MoveVer2 ("Move：竖向速度", Range(-10, 10)) = 0
-        [SubPowerSlider(Emi, 2)] _Emissive_Speed2 ("Speed：切换速度", Range(0, 10)) = 0
         
         
         [Main(OutLine)]
@@ -189,6 +153,9 @@ Shader "JTRP/Lit"
     
     #define ATTRIBUTES_NEED_TEXCOORD2
     #define VARYINGS_NEED_TEXCOORD2
+    #define ATTRIBUTES_NEED_TEXCOORD7
+    #define VARYINGS_NEED_TEXCOORD7
+    
     
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
     #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
@@ -196,6 +163,15 @@ Shader "JTRP/Lit"
     #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/ShaderPass/ShaderPass.cs.hlsl"
     
     #include "ShaderLibrary\LitProperties.hlsl"
+    
+    
+    uniform float3 _FaceForward;
+    uniform float _Shadow_Gamma;
+    uniform float _Shadow_Scale;
+    uniform float _Shadow_DepthThreshold;
+    uniform float _Shadow_Width;
+    uniform float _FaceShadowStep;
+    
     
     ENDHLSL
     
@@ -292,18 +268,111 @@ Shader "JTRP/Lit"
             
             #pragma shader_feature_local _ _ENABLE_SELFSHADOW
             #pragma shader_feature_local _ _ENABLE_HIGHLIGHT_ON
+            #pragma shader_feature_local _ _FACE_MODE
             #pragma shader_feature_local _ _HL_PBR
             #pragma shader_feature_local _ _RIMLIGHT_ENABLE_ON
-            #pragma shader_feature_local _ _MATCAP_ENABLE_ON
-            #pragma shader_feature_local _ _EMISSIVE_ENABLE_ON
             
-            #define ATTRIBUTES_NEED_TEXCOORD7
-            #define VARYINGS_NEED_TEXCOORD7
+            #include "ShaderLibrary\ShaderPassForward.hlsl"
             
-            #include "ShaderLibrary/ShaderPassForward.hlsl"
+            
+            float GetDFFaceShadowStep(float3 F, float3 L, float gamma, float2 uv, float selfShadow = 0, float scale = 1)
+            {
+                float3 FH = normalize(float3(F.x, 0, F.z));// F的XZ投影
+                float3 LH = normalize(float3(L.x, 0, L.z));// L的XZ投影
+                
+                float halfLambert = dot(LH, FH) * 0.5 + 0.5;// F L夹角
+                halfLambert = pow(halfLambert, 1 / gamma) ;
+                float LRFlag = normalize(cross(FH, LH).y);// -1 / 1 表示左右
+                
+                float lightMap = 1 - SAMPLE_TEXTURE2D(_ShadowMap, s_linear_repeat_sampler, float2(uv.x * - LRFlag, uv.y)).r;
+                float shadowThreshold = halfLambert;
+                shadowThreshold = shadowThreshold * scale - (scale - 1) * 0.5;
+                
+                #ifdef _ENABLE_SELFSHADOW
+                    return max(selfShadow, step(shadowThreshold, lightMap));
+                #else
+                    return step(shadowThreshold, lightMap);
+                #endif
+            }
+            
+            float GetHairShadow(LitToonContext context, PositionInputs posInput, FragInputs input)
+            {
+                #if !defined(_FACE_MODE) | !defined(_ENABLE_SELFSHADOW)
+                    return 0;
+                #endif
+                
+                float2 L_View = normalize(mul((float3x3)UNITY_MATRIX_V, context.L).xy);
+                float2 ssUV = posInput.positionSS + L_View * 20 / posInput.linearDepth * _Shadow_Width * GetScaleWithHight();
+                float depthTex = LoadCameraDepth(clamp(ssUV, 0, _ScreenParams.xy - 1));
+                float depthScene = LinearEyeDepth(depthTex, _ZBufferParams);
+                float depthDiff = posInput.linearDepth - depthScene;
+                return step(0.01 + _Shadow_DepthThreshold, depthDiff) * input.color.a;
+            }
+            
+            void SkinFrag(PackedVaryingsToPS packedInput, out float4 outColor: SV_Target0)
+            {
+                FragInputs input;
+                PositionInputs posInput;
+                BuiltinData builtinData;
+                SurfaceData surfaceData;
+                LitToonContext context = (LitToonContext)0;
+                
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(packedInput);
+                input = UnpackVaryingsMeshToFragInputs(packedInput.vmesh);
+                
+                GetUVs(context, input);
+                
+                float4 _MainTex_var = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, context.uv0.xy);
+                float4 _ShadowMap_var = SAMPLE_TEXTURE2D(_ShadowMap, s_linear_repeat_sampler, context.uv0.xy);
+                
+                _MainTex_var.rgb = ShiftColorPurity(_MainTex_var.rgb, _Purity);
+                context.roughness = ComputeRoughness();
+                PreData(_LightColorIntensity, packedInput, input, posInput, builtinData, surfaceData, context);
+                
+                #ifdef _FACE_MODE
+                    context.shadowStep = GetDFFaceShadowStep(_FaceForward, context.L, _Shadow_Gamma, context.uv0.xy, _FaceShadowStep, _Shadow_Scale);
+                #else
+                    context.shadowStep = GetShadowStep(context.halfLambert, _Shadow_Step, _Shadow_Feather, GetSelfShadow(context, posInput));
+                #endif
+                
+                context.shadowStep = Max3(context.shadowStep, _ShadowMap_var.a, GetHairShadow(context, posInput, input));
+                
+                float step2 = GetShadowStep(context.halfLambert, _Shadow_Step2, _Shadow_Feather2);
+                
+                GetBaseColor(context, _MainTex_var.rgb * _Color.rgb, _SkyColorIntensity, _Shadow_Purity);
+                
+                PointLightLoop(context, posInput, builtinData, _PointLightColorIntensity, _HighColorLevel);
+                
+                context.diffuse = StdToonDiffuseLightingModel(context,
+                _ShadowIntensity * (1 - _ShadowMap_var.g), _ShadowMapColor.rgb, _ShadowFixedColor, _ShadowMap_var.a);
+                
+                context.specular = max(context.highLightColor,
+                GetHighLight(context.N, context.V, context.L, context.dirLightColor, context.shadowStep, context.roughness, _HighColorInt1, _HighColorInt2)
+                * saturate(_HighColorLevel));
+                
+                
+                float3 rimColor = GetRimLight(context, posInput, input);
+                context.emissive = max(context.emissive, rimColor);
+                
+                
+                float3 finalCol = 0;
+                finalCol = context.diffuse + ToonLightColorAddMode(context.brightBaseColor, context.specular)
+                + context.emissive + _AddColor.rgb * _AddColorIntensity;
+                
+                
+                outColor = float4(finalCol, 1);
+                
+                #if _AddColorIntensity == 1
+                    outColor = 0;
+                #endif
+                
+                // outColor = float4(GetHairShadow(context, posInput, input).xxx, 0);
+            }
+            
+            
             
             #pragma vertex Vert
-            #pragma fragment Frag
+            #pragma fragment SkinFrag
             
             ENDHLSL
             

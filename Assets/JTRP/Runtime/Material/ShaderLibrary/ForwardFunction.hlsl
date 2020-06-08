@@ -2,11 +2,15 @@
 
 
 
+float3 ShiftColorPurity(float3 color, float purity)
+{
+    return lerp(Luminance(color), color, purity);
+}
 
-float GetShadowStep(float halfLambert, float step, float feather, float maxValue = 0, float selfShadow = 1)
+float GetShadowStep(float halfLambert, float step, float feather, float selfShadow = 1)
 {
     return //       阴影 -0.5 ~ 0.5 亮面   / 锐利 0.0001 ~ 1 平滑
-    saturate(max((step - halfLambert * selfShadow) / feather, maxValue));
+    saturate((step - halfLambert * selfShadow) / feather);
 }
 
 float StepAntiAliasing(float x, float y)
@@ -20,14 +24,20 @@ float2 GetWHRatio()
     return float2(_ScreenParams.y / _ScreenParams.x, 1);
 }
 
+float GetScaleWithHight()
+{
+    return _ScreenParams.y / 1080;
+}
+
 float GetSSRimScale(float z)
 {
-    float w = (1.0 / (pow(z, 1.5) + 0.75)) * _ScreenParams.y / 1080;
+    float w = (1.0 / (PositivePow(z + saturate(UNITY_MATRIX_P._m00), 1.5) + 0.75)) * GetScaleWithHight();
+    w *= lerp(1, UNITY_MATRIX_P._m00, 0.60 * saturate(0.25 * z * z));
     return w < 0.01 ? 0: w;
 }
-float GetOutLineScale(float z, float nPower = 0.8, float fPower = 0.1)
+float GetOutLineScale(float z, float nPower = 1.05, float fPower = 0.2)
 {
-    return pow(z, z < 1 ?nPower: fPower);
+    return pow(z, z < 1 ?nPower: fPower) * lerp(1, UNITY_MATRIX_P._m00, IsPerspectiveProjection() ? 0.60: 1.0);
 }
 
 float3 GetSmoothedWorldNormal(float2 uv7, float3x3 tbn)
@@ -149,12 +159,6 @@ float4 ComputeScreenPos(float4 pos, float projectionSign)
     o.xy = float2(o.x, o.y * projectionSign) + o.w;
     o.zw = pos.zw;
     return o;
-}
-
-float3 GetShadowColor(float3 color, float shadowPower)
-{
-    shadowPower = max(1, shadowPower);
-    return pow(abs(color), shadowPower);
 }
 
 float3 GetMatCap(float3 V, float3 lightColor, float2 uv, float shadowStep, float3 N, float matcapMask)
